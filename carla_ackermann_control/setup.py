@@ -41,6 +41,9 @@ elif ROS_VERSION == 2:
             'console_scripts': [
                 '{}_node = {}.{}_node:main'.format(package_name, package_name, package_name)
             ],
+            'console_scripts': [
+                '{}_node_new = {}.{}_node_new:main'.format(package_name, package_name, package_name)
+            ],
         },
         package_dir={'': 'src'},
     )

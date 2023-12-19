@@ -17,6 +17,7 @@ endif()
 catkin_package()
 
 install(PROGRAMS src/carla_ackermann_control/carla_ackermann_control_node.py
+		  src/carla_ackermann_control/carla_ackermann_control_node_new.py
                  src/carla_ackermann_control/carla_control_physics.py
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 

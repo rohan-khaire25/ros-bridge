@@ -83,7 +83,7 @@ class CarlaAckermannControl(CompatibleNode):
         if ROS_VERSION == 2:
             self. add_on_set_parameters_callback(self.reconfigure_pid_parameters)
 
-        self.control_loop_rate = self.get_param("control_loop_rate", 0.05)
+        self.control_loop_rate = self.get_param("control_loop_rate", 0.0275)
         self.last_ackermann_msg_received_sec =  self.get_time()
         self.vehicle_status = CarlaEgoVehicleStatus()
         self.vehicle_info = CarlaEgoVehicleInfo()

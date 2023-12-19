@@ -1,10 +1,18 @@
 import os
-
+from pathlib import Path
 import launch
+from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
+    # Loading params for carla_autoware_transfer node
+    config = os.path.join(
+        get_package_share_directory('carla_autoware_transfer'),
+        'config',
+        'params.yaml'
+        )
+    
     ld = launch.LaunchDescription([
         launch.actions.DeclareLaunchArgument(
             name='host',
@@ -13,6 +21,10 @@ def generate_launch_description():
         launch.actions.DeclareLaunchArgument(
             name='port',
             default_value='2000'
+        ),
+        launch.actions.DeclareLaunchArgument(
+            name='control_loop_rate',
+            default_value='0.027'
         ),
         launch.actions.DeclareLaunchArgument(
             name='timeout',
@@ -75,15 +87,39 @@ def generate_launch_description():
                 'spawn_point': launch.substitutions.LaunchConfiguration('spawn_point')
             }.items()
         ),
-        launch.actions.IncludeLaunchDescription(
-            launch.launch_description_sources.PythonLaunchDescriptionSource(
-                os.path.join(get_package_share_directory(
-                    'carla_manual_control'), 'carla_manual_control.launch.py')
-            ),
-            launch_arguments={
-                'role_name': launch.substitutions.LaunchConfiguration('role_name')
-            }.items()
-        )
+        #Node(
+        #     package='tf2_ros',
+        #     executable='static_transform_publisher',
+        #     arguments=['0', '0', '0', '0', '0', '0', 'ego_vehicle', 'base_link'],
+        #     output='screen'
+        #     ),
+        Node(
+            package='carla_pointcloud',
+            executable='carla_pointcloud_node',
+            name='carla_pointcloud_interface',
+            output='screen'
+        ),
+        Node(
+            package='carla_autoware_transfer',
+            executable='carla_autoware_transfer',
+            name='carla_autoware_transfer_interface',
+            output='screen',
+            parameters=[
+                    {'groundtruth_localization' : False}
+            ]
+        ),
+        Node(
+            package='carla_ackermann_control',
+            executable='carla_ackermann_control_node_new',
+            name='carla_ackermann_control',
+            output='screen',
+        ),
+        Node(
+            package='autoware_carla_transfer',
+            executable='autoware_carla_transfer',
+            name='autoware_carla_transfer_interface',
+            output='screen',
+        )  
     ])
     return ld
 
